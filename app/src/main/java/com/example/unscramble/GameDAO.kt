@@ -12,5 +12,5 @@ interface GameDAO {
     fun getAllWords(): Flow<List<String>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(word: String)
+    suspend fun insert(gameEntity: GameEntity)
 }
