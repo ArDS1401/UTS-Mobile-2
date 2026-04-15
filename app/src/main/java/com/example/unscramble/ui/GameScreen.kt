@@ -39,10 +39,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,7 +63,7 @@ import com.example.unscramble.R
 import com.example.unscramble.ui.theme.UnscrambleTheme
 
 @Composable
-fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
+fun GameScreen(gameViewModel: GameViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val gameUiState by gameViewModel.uiState.collectAsState()
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
@@ -116,6 +120,12 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
                     fontSize = 16.sp
                 )
             }
+
+            AddWordSection(
+                onAddClick = { newWord ->
+                    gameViewModel.addNewWord(newWord)
+                }
+            )
         }
 
         GameStatus(score = gameUiState.score, modifier = Modifier.padding(20.dp))
@@ -208,6 +218,29 @@ fun GameLayout(
                 keyboardActions = KeyboardActions(
                     onDone = { onKeyboardDone() }
                 )
+            )
+        }
+    }
+}
+
+@Composable
+fun AddWordSection(onAddClick: (String) -> Unit) {
+    var textState by remember { mutableStateOf("") }
+
+    Column {
+        OutlinedTextField(
+            value = textState,
+            modifier = Modifier.fillMaxWidth(),
+            onValueChange = { textState = it },
+            label = { Text("Tambah Kata Baru") }
+        )
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onAddClick }
+        ) {
+            Text(
+                text = stringResource(R.string.submit),
+                fontSize = 16.sp
             )
         }
     }
